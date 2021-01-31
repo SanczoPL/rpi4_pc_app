@@ -43,7 +43,7 @@ find_package(Qt5Network REQUIRED)
 #include fix for OpenCV
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_subdirectory(spdlog)
+add_subdirectory(IncludeSpdlog)
 
 set(SRC
 	ConfigReader/src/configreader.cc
@@ -86,7 +86,7 @@ add_executable(testModules
 add_test(testModules testModules)
 
 
-target_link_libraries(testModules spdlog::spdlog)
+target_link_libraries(testModules IncludeSpdlog)
 target_link_libraries(testModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
 target_link_libraries(testModules Qt5::Test)
 
@@ -94,12 +94,12 @@ qt5_use_modules(${PROJECT_NAME} Network Widgets Test)
 
 
 if (UNIX)
-	target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
+	target_link_libraries(${PROJECT_NAME} IncludeSpdlog)
 	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test)
 endif (UNIX)
 
 if (WIN32)
-	target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
+	target_link_libraries(${PROJECT_NAME} IncludeSpdlog)
 	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test)
 endif (WIN32)
 
@@ -166,6 +166,7 @@ if (WIN32)
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_flann450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_dnn450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_highgui450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_gapi450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_videoio_ffmpeg450_64.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 
 		)
