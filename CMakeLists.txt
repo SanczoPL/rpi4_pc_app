@@ -29,7 +29,6 @@ endif (WIN32)
 
 
 configure_file(config.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config.json)
-
 configure_file(config.json ${CMAKE_BINARY_DIR}/config.json)
 
 
@@ -43,17 +42,16 @@ find_package(Qt5Network REQUIRED)
 #include fix for OpenCV
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+
 add_subdirectory(IncludeSpdlog)
-add_subdirectory(QtCommunicatorPlugin)
+add_subdirectory(ConfigReader)
+add_subdirectory(Broadcaster)
+
 
 set(SRC
-	ConfigReader/src/configreader.cc
-	Broadcaster/src/broadcaster.cc
 )
 
 set(HEADERS
-	ConfigReader/include/configreader.h
-	Broadcaster/include/broadcaster.h
 )
 
 file(GLOB_RECURSE SRC_GLOB src/*.cc src/*.c src/*.cpp)
@@ -70,7 +68,6 @@ add_executable(${TARGET_NAME}
 )
 
 add_executable(testModules 
-	#ProcessingModules/src/Test/test.cc
 	${SRC} ${HEADERS}
 	${SRC_GLOB} ${HEADERS_GLOB}
 	${SRC_IMAGE_PROCESSING_GLOB} ${HEADERS_IMAGE_PROCESSING_GLOB}
@@ -80,7 +77,7 @@ add_executable(testModules
 add_test(testModules testModules)
 
 
-target_link_libraries(testModules IncludeSpdlog )
+target_link_libraries(testModules IncludeSpdlog ConfigReader Broadcaster )
 target_link_libraries(testModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
 target_link_libraries(testModules Qt5::Test Qt5::Network Qt5::Widgets) 
 
@@ -88,12 +85,12 @@ qt5_use_modules(${PROJECT_NAME} Network Widgets Test)
 
 
 if (UNIX)
-	target_link_libraries(${PROJECT_NAME} IncludeSpdlog)
+	target_link_libraries(${PROJECT_NAME} IncludeSpdlog ConfigReader Broadcaster)
 	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test Qt5::Network Qt5::Widgets)
 endif (UNIX)
 
 if (WIN32)
-	target_link_libraries(${PROJECT_NAME} IncludeSpdlog)
+	target_link_libraries(${PROJECT_NAME} IncludeSpdlog ConfigReader Broadcaster)
 	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test Qt5::Network Qt5::Widgets)
 endif (WIN32)
 
