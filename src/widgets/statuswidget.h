@@ -20,11 +20,11 @@ class StatusWidget : public QLabel
   
 public slots:
 	void onUpdate();
-	void onUpdatePing(qint64 ping);
+	void onUpdatePing(QJsonObject ping);
 	void configure(QJsonObject const& a_config);
 
 private:
-	double m_ping;
+	qint64 m_ping;
 
 };
 #endif // STATUS_WIDGET_H

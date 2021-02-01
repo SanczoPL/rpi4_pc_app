@@ -100,7 +100,7 @@ void MainWindow::onUpdate()
 		m_server->onSubscribe(topics);
 		m_firstTime = false;
 	}
-	m_server->onSendPing(m_config[SERVER].toObject()[COMMAND_TOPIC].toInt(), m_config[SERVER].toObject()[INFO_TOPIC].toInt());
+	m_server->onSendPing( m_config[SERVER].toObject()[INFO_TOPIC].toInt());
 }
 
 void MainWindow::createStartupThreads()
@@ -113,6 +113,7 @@ void MainWindow::createStartupThreads()
 	m_server->moveToThread(m_serverThread);
 	connect(m_serverThread, &QThread::finished, m_server, &QObject::deleteLater);
 	m_serverThread->start();
+	
 
 	m_imageWidget = new ImageWidget(m_config[IMAGE_WIDGET].toObject());
 	connect(m_server, &Broadcaster::updateImage, m_imageWidget, &ImageWidget::onUpdateImage);
@@ -120,7 +121,7 @@ void MainWindow::createStartupThreads()
 	
 
 	m_statusWidget = new StatusWidget(m_config[STATUS_WIDGET].toObject());
-	connect(this, &MainWindow::updatePing, m_statusWidget, &StatusWidget::onUpdatePing);
+	connect(m_server, &Broadcaster::updatePing, m_statusWidget, &StatusWidget::onUpdatePing);
 	
 	m_timer = new QTimer(this);
 	m_timer->start(1000);

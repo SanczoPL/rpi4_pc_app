@@ -2,6 +2,8 @@
 
 #include "statuswidget.h"
 
+constexpr auto TIME{ "Time" };
+
 StatusWidget::StatusWidget(QJsonObject const& a_config)
 	:m_ping(1000)
 {
@@ -25,11 +27,21 @@ void StatusWidget::onUpdate()
 
 }
 
-void StatusWidget::onUpdatePing(qint64 ping)
+void StatusWidget::onUpdatePing(QJsonObject ping)
 {
-	Logger->info("StatusWidget::onUpdatePing()");
-	m_ping = ping;
-	this->setText(QString::number(m_ping));
+	QString pastTime = ping[TIME].toString();
+
+
+	Logger->info("StatusWidget::onUpdatePing() ping:{}", ping[TIME].toString().toStdString());
+	QDateTime nowData = QDateTime::currentDateTime();
+	QDateTime pastData = QDateTime::fromString(pastTime, "hh:mm:ss AP dd/MM/yyyy");
+	quint64 diff = pastData.msecsTo(nowData);
+	
+	Logger->info("StatusWidget::onUpdatePing() nowData:{}", nowData.toMSecsSinceEpoch());
+	Logger->info("StatusWidget::onUpdatePing() pastData:{}", pastData.toMSecsSinceEpoch());
+	Logger->info("StatusWidget::onUpdatePing() diff:{}", diff);
+	this->setText(QString::number(diff));
+	this->update()
 }
 
 void StatusWidget::configure(QJsonObject const& a_config)
