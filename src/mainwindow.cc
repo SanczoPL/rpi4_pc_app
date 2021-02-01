@@ -38,10 +38,18 @@ MainWindow::MainWindow(QJsonObject const& a_config)
 void MainWindow::setupMainWidget() {
 	QGridLayout* mainLayout = new QGridLayout;
 	mainLayout->setContentsMargins(0, 0, 0, 0);
-	//mainLayout->addWidget(leftToolBar, 0, 0);
-	//mainLayout->addWidget(rightWidget, 0, 1);
+
+	
 	
 	mainLayout->addWidget(m_imageWidget, 0, 0);
+
+	m_statusWidget = new StatusWidget(m_config[IMAGE_WIDGET].toObject());
+	m_statusWidget->setMaximumHeight(30);
+
+	m_statusBar = new QStatusBar(this);
+	m_statusBar->addPermanentWidget(m_statusWidget);
+	mainLayout->addWidget(m_statusBar, 1, 0);
+	mainLayout->setRowStretch(1, 1);
 
 	QWidget* mainCentralWidget = new QWidget(this);
 	mainCentralWidget->setLayout(mainLayout);

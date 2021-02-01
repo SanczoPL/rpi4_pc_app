@@ -1,7 +1,7 @@
 #ifndef STATUS_WIDGET_H
 #define STATUS_WIDGET_H
 
-#include "structures.h"
+#include "../structures.h"
 
 #include <QWidget>
 #include <QLabel>

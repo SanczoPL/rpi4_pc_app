@@ -1,7 +1,7 @@
 #ifndef IMAGE_WIDGET_H
 #define IMAGE_WIDGET_H
 
-#include "structures.h"
+#include "../structures.h"
 
 #include <QWidget>
 #include <QLabel>

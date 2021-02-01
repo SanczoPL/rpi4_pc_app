@@ -16,6 +16,7 @@ ImageWidget::ImageWidget(QJsonObject const& a_config)
 	cv::resize(decodedMat, decodedMat, cv::Size(m_widthResize, m_heightResize), 0, 0, cv::INTER_NEAREST);
 	QImage image1 = QImage((uchar*)decodedMat.data, decodedMat.cols, decodedMat.rows, decodedMat.step, QImage::Format_Grayscale8);
 	setAlignment(Qt::AlignCenter);
+	this->setPixmap(QPixmap::fromImage(image1));
 	setEnabled(true);
 }
 

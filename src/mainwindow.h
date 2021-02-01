@@ -2,13 +2,12 @@
 #define MAINWINDOW_H
 
 #include "structures.h"
-#include "imagewidget.h"
-#include "statuswidget.h"
+#include "widgets/imagewidget.h"
+#include "widgets/statuswidget.h"
 #include "server.h"
 #include "mainwindow.h"
 
 #include "../Broadcaster/include/broadcaster.h"
-#include "../ImageProcessing/acquisition.h"
 
 #include <QGraphicsItem>
 #include <QJsonObject>
@@ -47,8 +46,12 @@ public slots:
 	
 
 private:
+
+
+	QStatusBar* m_statusBar;
 	ImageWidget* m_imageWidget;
 	StatusWidget* m_statusWidget;
+
 private:
 	// QWidgets:
 
