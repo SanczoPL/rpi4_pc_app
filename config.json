@@ -10,7 +10,8 @@
     "Ip": "192.168.8.150",
     "InfoTopic": 1,
     "CommandTopic": 2,
-    "ImageTopic": 3
+    "ImageTopic": 3,
+    "Id": 2
   },
   "ImageAcquisition": {
     "Width": 32,
