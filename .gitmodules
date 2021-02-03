@@ -10,3 +10,6 @@
 [submodule "QtCommunicator"]
 	path = QtCommunicator
 	url = https://github.com/SanczoPL/QtCommunicator.git
+[submodule "QtCommunicatorPlugin"]
+	path = QtCommunicatorPlugin
+	url = https://github.com/SanczoPL/QtCommunicatorPlugin
