@@ -46,31 +46,40 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 add_subdirectory(IncludeSpdlog)
 add_subdirectory(ConfigReader)
 add_subdirectory(Broadcaster)
+add_subdirectory(QtCommunicator)
+add_subdirectory(QtCommunicatorPlugin)
+
+file(GLOB_RECURSE SRC_TEST_GLOB QtCommunicator/src/*.cc )
+file(GLOB_RECURSE HEADERS_TEST_GLOB QtCommunicator/include/*.h)
+
+set(SRC_TEST test/test.cc)
+
+set(HEADERS_TEST test/test.h)
+
+set(SRC_MAIN src/main.cc)
+
+set(SRC src/mainwindow.cc src/server.cc )
+
+set(HEADERS src/mainwindow.h src/server.h src/structures.h)
 
 
-set(SRC
-)
-
-set(HEADERS
-)
-
-file(GLOB_RECURSE SRC_GLOB src/*.cc src/*.c src/*.cpp)
-file(GLOB_RECURSE HEADERS_GLOB src/*.h src/*.hpp)
-
-file(GLOB_RECURSE SRC_IMAGE_PROCESSING_GLOB ImageProcessing/*.cc ImageProcessing/*.c ImageProcessing/*.cpp)
-file(GLOB_RECURSE HEADERS_IMAGE_PROCESSING_GLOB ImageProcessing/*.h ImageProcessing/*.hpp)
+file(GLOB_RECURSE SRC_WIDGET_GLOB src/widgets/*.cc src/widgets/*.c src/widgets/*.cpp)
+file(GLOB_RECURSE HEADERS_WIDGET_GLOB src/widgets/*.h src/widgets/*.hpp)
 
 
 add_executable(${TARGET_NAME}
+	${SRC_MAIN}
     ${SRC} ${HEADERS}
 	${SRC_GLOB} ${HEADERS_GLOB}
-	${SRC_IMAGE_PROCESSING_GLOB} ${HEADERS_IMAGE_PROCESSING_GLOB}
+	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
 )
 
 add_executable(testModules 
 	${SRC} ${HEADERS}
+	${SRC_TEST} ${HEADERS_TEST}
 	${SRC_GLOB} ${HEADERS_GLOB}
-	${SRC_IMAGE_PROCESSING_GLOB} ${HEADERS_IMAGE_PROCESSING_GLOB}
+	#${SRC_TEST_GLOB} ${HEADERS_TEST_GLOB}
+	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
 )
 	
 
@@ -117,20 +126,28 @@ if (WIN32)
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+	add_custom_command(TARGET testModules POST_BUILD
+       COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:testModules>)
 endif(WIN32)
 
 if (WIN32)
 	macro(qt5_copy_dll APP DLL)
 		# find the release *.dll file
-		get_target_property(Qt5_${DLL}Location Qt5::${DLL} LOCATION)
+		if(${CMAKE_BUILD_TYPE} STREQUAL  "Release")
+			get_target_property(Qt5_${DLL}Location Qt5::${DLL} LOCATION)
+		endif()
 		# find the debug *d.dll file
-		get_target_property(Qt5_${DLL}LocationDebug Qt5::${DLL} IMPORTED_LOCATION_DEBUG)
+		if(${CMAKE_BUILD_TYPE} STREQUAL  "Debug")
+			get_target_property(Qt5_${DLL}LocationDebug Qt5::${DLL} IMPORTED_LOCATION_DEBUG)
+		endif()
+
 		add_custom_command(TARGET ${APP} POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
 	endmacro()
 	qt5_copy_dll( ${PROJECT_NAME} Core)
+	qt5_copy_dll( testModules Test)
 
-	message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}/bin/Release ")
+	message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}/Release ")
 
 
 	set(OPENCV_PREFIX_BUILD_TYPE "")
@@ -140,8 +157,8 @@ if (WIN32)
 	endif()
 	if(${CMAKE_BUILD_TYPE} STREQUAL  "Debug")
 		set(OPENCV_PREFIX_BUILD_TYPE "d")
-
 	endif()
+
 	message("Copy OpenCV file:" )
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_stitching450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
