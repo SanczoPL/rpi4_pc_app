@@ -86,7 +86,7 @@ add_executable(testModules
 add_test(testModules testModules)
 
 
-target_link_libraries(testModules IncludeSpdlog ConfigReader Broadcaster )
+target_link_libraries(testModules IncludeSpdlog ConfigReader Broadcaster QtCommunicatorPlugin)
 target_link_libraries(testModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
 target_link_libraries(testModules Qt5::Test Qt5::Network Qt5::Widgets) 
 
@@ -94,7 +94,7 @@ qt5_use_modules(${PROJECT_NAME} Network Widgets Test)
 
 
 if (UNIX)
-	target_link_libraries(${PROJECT_NAME} IncludeSpdlog ConfigReader Broadcaster)
+	target_link_libraries(${PROJECT_NAME} IncludeSpdlog ConfigReader Broadcaster QtCommunicatorPlugin)
 	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test Qt5::Network Qt5::Widgets)
 endif (UNIX)
 
