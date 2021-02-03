@@ -9,17 +9,7 @@ StatusWidget::StatusWidget(QJsonObject const& a_config)
 {
 	setAlignment(Qt::AlignCenter);
 	setEnabled(true);
-	this->setText(QString::number(m_ping));
 
-	QPalette pa;
-	pa.setColor(QPalette::WindowText, Qt::red);
-	this->setPalette(pa);
-
-	QFont ft;
-	ft.setPointSize(14);
-	this->setFont(ft);
-
-	setStyleSheet("color:red;");
 }
 
 void StatusWidget::onUpdate()
@@ -41,7 +31,17 @@ void StatusWidget::onUpdatePing(QJsonObject ping)
 	Logger->info("StatusWidget::onUpdatePing() pastData:{}", pastData.toMSecsSinceEpoch());
 	Logger->info("StatusWidget::onUpdatePing() diff:{}", diff);
 	this->setText(QString::number(diff));
-	this->update()
+	this->update();
+	QPalette pa;
+	pa.setColor(QPalette::WindowText, Qt::red);
+	this->setPalette(pa);
+
+	QFont ft;
+	ft.setPointSize(14);
+	this->setFont(ft);
+
+	setStyleSheet("color:red;");
+
 }
 
 void StatusWidget::configure(QJsonObject const& a_config)
