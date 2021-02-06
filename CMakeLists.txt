@@ -15,8 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAGS_COMMON} -O1 " )
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+#set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOUIC ON)
 
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -24,7 +24,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 if (WIN32)
 	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\opencvBuild")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\Qt\\5.12.8\\msvc2017_64")
+	set(QT5_PATH "E:\\Qt\\5.12.8\\msvc2017_64")
+	list(APPEND CMAKE_PREFIX_PATH ${QT5_PATH})
 endif (WIN32)
 
 
@@ -42,7 +43,8 @@ find_package(Qt5Network REQUIRED)
 #include fix for OpenCV
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-
+#add_subdirectory(googletest)
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_subdirectory(IncludeSpdlog)
 add_subdirectory(ConfigReader)
 add_subdirectory(Broadcaster)
@@ -53,13 +55,15 @@ file(GLOB_RECURSE SRC_TEST_GLOB QtCommunicator/src/*.cc )
 file(GLOB_RECURSE HEADERS_TEST_GLOB QtCommunicator/include/*.h)
 
 set(SRC_TEST test/test.cc)
-
 set(HEADERS_TEST test/test.h)
 
+#set(SRC_GTEST gtest/test.cc)
+#set(HEADERS_GTEST gtest/test.h)
+
+#set(SRC_MAIN_GTEST gtest/main.cc)
 set(SRC_MAIN src/main.cc)
 
 set(SRC src/mainwindow.cc src/server.cc )
-
 set(HEADERS src/mainwindow.h src/server.h src/structures.h)
 
 
@@ -78,29 +82,44 @@ add_executable(testModules
 	${SRC} ${HEADERS}
 	${SRC_TEST} ${HEADERS_TEST}
 	${SRC_GLOB} ${HEADERS_GLOB}
-	#${SRC_TEST_GLOB} ${HEADERS_TEST_GLOB}
 	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
 )
 	
+#add_executable(gtestModules
+#	${SRC} ${HEADERS}
+#	${SRC_MAIN_GTEST}
+#	#${SRC_GTEST} ${HEADERS_GTEST}
+#	${SRC_GLOB} ${HEADERS_GLOB}
+#	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
+#)
 
-add_test(testModules testModules)
+
 
 
 target_link_libraries(testModules IncludeSpdlog ConfigReader Broadcaster QtCommunicator QtCommunicatorPlugin)
 target_link_libraries(testModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
 target_link_libraries(testModules Qt5::Test Qt5::Network Qt5::Widgets) 
+add_test(testModules testModules)
+
+#target_link_libraries(gtestModules IncludeSpdlog ConfigReader Broadcaster QtCommunicator QtCommunicatorPlugin)
+#target_link_libraries(gtestModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
+#target_link_libraries(gtestModules Qt5::Network Qt5::Widgets)
+#target_link_libraries(gtestModules gtest gtest_main)
+#add_test( gtestModules gtestModules )
 
 qt5_use_modules(${PROJECT_NAME} Network Widgets Test)
 
 
 if (UNIX)
 	target_link_libraries(${PROJECT_NAME} IncludeSpdlog ConfigReader Broadcaster QtCommunicatorPlugin)
-	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test Qt5::Network Qt5::Widgets)
+	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
+	target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Widgets)
 endif (UNIX)
 
 if (WIN32)
 	target_link_libraries(${PROJECT_NAME} IncludeSpdlog ConfigReader Broadcaster)
-	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads Qt5::Test Qt5::Network Qt5::Widgets)
+	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
+	target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Widgets)
 endif (WIN32)
 
 
@@ -142,7 +161,9 @@ if (WIN32)
 		endif()
 
 		add_custom_command(TARGET ${APP} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>
+			
+			)
 	endmacro()
 	qt5_copy_dll( ${PROJECT_NAME} Core)
 	qt5_copy_dll( testModules Core)
@@ -160,7 +181,13 @@ if (WIN32)
 	endif()
 
 	message("Copy OpenCV file:" )
+	message("qt:" ${QT5_PATH}/bin/Qt5Test${OPENCV_PREFIX_BUILD_TYPE}.dll )
+		message("to:" ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${QT5_PATH}/bin/Qt5Test${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${QT5_PATH}/bin/Qt5Gui${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${QT5_PATH}/bin/Qt5Widgets${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_stitching450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_bgsegm450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_tracking450${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
