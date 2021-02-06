@@ -13,3 +13,6 @@
 [submodule "QtCommunicatorPlugin"]
 	path = QtCommunicatorPlugin
 	url = https://github.com/SanczoPL/QtCommunicatorPlugin
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
