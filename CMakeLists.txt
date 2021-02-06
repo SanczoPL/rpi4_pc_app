@@ -86,7 +86,7 @@ add_executable(testModules
 add_test(testModules testModules)
 
 
-target_link_libraries(testModules IncludeSpdlog ConfigReader Broadcaster QtCommunicatorPlugin)
+target_link_libraries(testModules IncludeSpdlog ConfigReader Broadcaster QtCommunicator QtCommunicatorPlugin)
 target_link_libraries(testModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
 target_link_libraries(testModules Qt5::Test Qt5::Network Qt5::Widgets) 
 
@@ -145,7 +145,7 @@ if (WIN32)
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
 	endmacro()
 	qt5_copy_dll( ${PROJECT_NAME} Core)
-	qt5_copy_dll( testModules Test)
+	qt5_copy_dll( testModules Core)
 
 	message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}/Release ")
 
