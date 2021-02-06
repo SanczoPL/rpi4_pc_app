@@ -16,16 +16,10 @@ private slots:
 private slots:
 	void t1() { QVERIFY(true); }
 	void t2();
-private slots:
-	void t3()
-	{
-		QTest::addColumn<QString>("string");
-		QTest::addColumn<QString>("result");
 
-		QTest::newRow("all lower") << "hello" << "HELLO";
-		QTest::newRow("mixed") << "Hello" << "HELLO";
-		QTest::newRow("all upper") << "HELLO" << "HELLO";
-	}
+signals:
+	void subscribe1(const qint32 topic);
+	void subscribe2(const qint32 topic);
 };
 
 
