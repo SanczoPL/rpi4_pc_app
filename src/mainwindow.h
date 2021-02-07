@@ -31,7 +31,6 @@ private:
 	void setupButtons();
 	void setupMainWidget();
 	void createStartupThreads();
-	void onPing(QJsonObject const& json);
 
 private slots:
 	void onUpdate();
@@ -40,20 +39,16 @@ private slots:
 
 
 signals:
-	void updatePing(qint64 ping);
+
 
 public slots:
-	
+	void onUpdateImage(QByteArray image, qint32 topic);
 
 private:
-
-
 	QStatusBar* m_statusBar;
 	ImageWidget* m_imageWidget;
 	StatusWidget* m_statusWidget;
-
-private:
-	// QWidgets:
+	ImageWidget* m_imageProcessingWidget;
 
 private:
 	// Threads:

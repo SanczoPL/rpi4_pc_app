@@ -5,22 +5,18 @@
 
 #include <QWidget>
 #include <QLabel>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QFrame>
 
 class Mat;
 
 class ImageWidget : public QLabel
 {
-  Q_OBJECT
+	Q_OBJECT
 
- public:
-  explicit ImageWidget(QJsonObject const& a_config);
-  
+public:
+	explicit ImageWidget(QJsonObject const& a_config);
 
 public slots:
-	void onUpdateImage(QByteArray image);
+	void onUpdateImage(QByteArray image, qint32 topic);
 	void onUpdate();
 	void configure(QJsonObject const& a_config);
 
@@ -29,9 +25,7 @@ private:
 	int m_height{};
 	int m_widthResize{};
 	int m_heightResize{};
-
-	QGraphicsScene* m_scene;
-
+	int m_dataSize{};
 };
 
 #endif // IMAGE_WIDGET_H
