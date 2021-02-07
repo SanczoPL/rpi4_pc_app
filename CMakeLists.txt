@@ -54,8 +54,8 @@ add_subdirectory(QtCommunicatorPlugin)
 file(GLOB_RECURSE SRC_TEST_GLOB QtCommunicator/src/*.cc )
 file(GLOB_RECURSE HEADERS_TEST_GLOB QtCommunicator/include/*.h)
 
-set(SRC_TEST test/test.cc)
-set(HEADERS_TEST test/test.h)
+set(SRC_TEST test/test_broadcaster.cc)
+set(HEADERS_TEST test/test_broadcaster.h)
 
 #set(SRC_GTEST gtest/test.cc)
 #set(HEADERS_GTEST gtest/test.h)
