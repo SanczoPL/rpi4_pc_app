@@ -16,9 +16,6 @@
 #include <QtWidgets>
 
 
-
-
-
 class MainWindow : public QWidget
 {
 	Q_OBJECT
@@ -26,7 +23,6 @@ class MainWindow : public QWidget
 public:
 	MainWindow(QJsonObject const& a_config);
 	
-
 private:
 	void setupButtons();
 	void setupMainWidget();
@@ -36,10 +32,6 @@ private slots:
 	void onUpdate();
 	void configure(QJsonObject const& a_config);
 	void onNewMessage(QJsonObject const& json);
-
-
-signals:
-
 
 public slots:
 	void onUpdateImage(QByteArray image, qint32 topic);
@@ -51,7 +43,6 @@ private:
 	ImageWidget* m_imageProcessingWidget;
 
 private:
-	// Threads:
 	const qint32 m_threadsMax{};
 
 	QThread* m_serverThread;
@@ -61,12 +52,9 @@ private:
 	MainWindow* m_mainWindow;
 
 private:
-	// Configs:
 	QJsonObject m_config;
 
-
 private:
-	// Timers:
 	QTimer* m_timer;
 
 private:

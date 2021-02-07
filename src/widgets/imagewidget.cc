@@ -7,6 +7,7 @@ constexpr auto HEIGHT{ "Height" };
 constexpr auto WIDTH_RESIZE{ "WidthResize" };
 constexpr auto HEIGHT_RESIZE{ "HeightResize" };
 
+
 ImageWidget::ImageWidget(QJsonObject const& a_config)
 : m_width{ a_config[WIDTH].toInt() }, m_height{ a_config[HEIGHT].toInt() }
 , m_widthResize{ a_config[WIDTH_RESIZE].toInt() }, m_heightResize{ a_config[HEIGHT_RESIZE].toInt() }
@@ -46,11 +47,7 @@ void ImageWidget::onUpdateImage(QByteArray image, qint32 topic)
 }
 
 void ImageWidget::onUpdate()
-{
-
-}
+{}
 
 void ImageWidget::configure(QJsonObject const& a_config)
-{
-
-}
+{}

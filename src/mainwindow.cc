@@ -15,7 +15,6 @@ constexpr auto IMAGE_TOPIC{ "ImageTopic" };
 constexpr auto TIME{ "Time" };
 
 
-
 MainWindow::MainWindow(QJsonObject const& a_config)
 	:m_config{ a_config },
 	m_firstTime(true),
@@ -34,19 +33,15 @@ MainWindow::MainWindow(QJsonObject const& a_config)
 
 	Logger->trace("MainWindow::MainWindow() setupLeftToolBar");
 	MainWindow::setupMainWidget(); // leftToolBar
-
 }
 
 void MainWindow::setupMainWidget() {
 	QGridLayout* mainLayout = new QGridLayout;
 	mainLayout->setContentsMargins(0, 0, 0, 0);
 
-	
-	
 	mainLayout->addWidget(m_imageWidget, 0, 0);
 	mainLayout->addWidget(m_imageProcessingWidget, 1, 0);
 	
-
 	m_statusWidget = new StatusWidget(m_config[IMAGE_WIDGET].toObject());
 	m_statusWidget->setMaximumHeight(30);
 
@@ -69,19 +64,13 @@ void MainWindow::setupMainWidget() {
 	this->show();
 }
 
-void MainWindow::setupButtons() {
-
-}
+void MainWindow::setupButtons() {}
 
 void MainWindow::onNewMessage(QJsonObject const& json) {
 	QString cmd = json[MESSAGE_TYPE].toString();
 	if (cmd == PING) {
 		Logger->trace(" MainWindow::onNewMessage() ping");
 	}
-
-
-	
-
 }
 
 void MainWindow::configure(QJsonObject const& a_config) {
@@ -102,9 +91,6 @@ void MainWindow::onUpdate()
 
 void MainWindow::createStartupThreads()
 {
-	
-
-	// Broadcaster:
 	m_serverThread = new QThread();
 	m_server = new Broadcaster(m_config[SERVER].toObject());
 	m_server->moveToThread(m_serverThread);
@@ -113,7 +99,6 @@ void MainWindow::createStartupThreads()
 	connect(m_server, &Broadcaster::updateImage, this, &MainWindow::onUpdateImage);
 	m_serverThread->start();
 	
-
 	m_imageWidget = new ImageWidget(m_config[IMAGE_WIDGET].toObject());
 	m_imageProcessingWidget = new ImageWidget(m_config[IMAGE_PROCESSING_WIDGET].toObject());
 	
@@ -125,7 +110,6 @@ void MainWindow::createStartupThreads()
 	m_timer->start(1000);
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 	connect(m_timer, SIGNAL(timeout()), m_statusWidget, SLOT(onUpdate()));
-
 }
 
 void MainWindow::onUpdateImage(QByteArray image, qint32 topic)

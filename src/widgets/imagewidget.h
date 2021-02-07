@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QLabel>
 
+
 class Mat;
 
 class ImageWidget : public QLabel

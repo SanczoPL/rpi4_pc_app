@@ -8,8 +8,6 @@
 #include <QTimer>
 #include <deque>
 
-
-
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -39,7 +37,6 @@ private:
 	cv::Mat m_frame;
 	int m_frameSize;
 	int m_bytesReceived;
-
 };
 
 #endif // SERVER_H

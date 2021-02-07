@@ -5,6 +5,7 @@
 constexpr auto TIME{ "Time" };
 constexpr auto ERROR_DATA{ "Error" };
 
+
 StatusWidget::StatusWidget(QJsonObject const& a_config)
 	:m_ping(0)
 	,m_error(0)

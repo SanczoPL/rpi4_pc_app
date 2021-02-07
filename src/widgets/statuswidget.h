@@ -9,6 +9,7 @@
 #include <QGraphicsView>
 #include <QFrame>
 
+
 class Mat;
 
 class StatusWidget : public QLabel
