@@ -27,10 +27,8 @@ void TestBroadcaster::BasicOperation()
 	QJsonObject config3{ config1 };
 	config2[ID] = 3;
 
-
 	IOServer* m_server = new IOServer();
 	QSignalSpy spy0(m_server, SIGNAL(listenForConnection()));
-
 
 	m_server->configure(config3);
 
@@ -52,7 +50,6 @@ void TestBroadcaster::BasicOperation()
 
 	QSignalSpy spy1(m_server, SIGNAL(connected()));
 	waitForSignal(1000, spy1, 50, 2);
-
 
 	QSignalSpy spy2(m_server, SIGNAL(subscribeAck()));
 

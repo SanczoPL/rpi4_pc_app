@@ -25,7 +25,7 @@ public slots:
 	void configure(QJsonObject const& a_config);
 
 private:
-	qint64 m_ping{};
+	quint64 m_ping{};
 	int m_error{};
 
 };

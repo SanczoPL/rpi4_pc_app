@@ -6,7 +6,7 @@ constexpr auto TIME{ "Time" };
 constexpr auto ERROR_DATA{ "Error" };
 
 StatusWidget::StatusWidget(QJsonObject const& a_config)
-	:m_ping(1000)
+	:m_ping(0)
 	,m_error(0)
 {
 	setAlignment(Qt::AlignCenter);
@@ -33,30 +33,21 @@ void StatusWidget::onUpdate()
 
 void StatusWidget::onUpdatePing(QJsonObject ping)
 {
-	QString pastTime = ping[TIME].toString();
+	qint32  old = ping[TIME].toInt();
+	qint32 now = int( QDateTime::currentMSecsSinceEpoch());
 
+	QDateTime deltaOld = QDateTime::fromMSecsSinceEpoch(old);
+	QDateTime deltaNew = QDateTime::fromMSecsSinceEpoch(now);
 
-	Logger->info("StatusWidget::onUpdatePing() ping:{}", ping[TIME].toString().toStdString());
 	QDateTime nowData = QDateTime::currentDateTime();
-	QDateTime pastData = QDateTime::fromString(pastTime, "hh:mm:ss AP dd/MM/yyyy");
-	quint64 diff = pastData.msecsTo(nowData);
-	
-	Logger->info("StatusWidget::onUpdatePing() nowData:{}", nowData.toMSecsSinceEpoch());
-	Logger->info("StatusWidget::onUpdatePing() pastData:{}", pastData.toMSecsSinceEpoch());
-	Logger->info("StatusWidget::onUpdatePing() diff:{}", diff);
-
-	m_ping = diff;
-
+	qint64 delta = deltaOld.msecsTo(deltaNew);
+	m_ping = delta;
 }
 
 void StatusWidget::onUpdateError(QJsonObject error)
 {
 	m_error = error[ERROR_DATA].toInt();
-
-
 }
 
 void StatusWidget::configure(QJsonObject const& a_config)
-{
-
-}
+{}
