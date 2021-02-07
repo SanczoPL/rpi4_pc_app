@@ -13,13 +13,12 @@ class TestBroadcaster : public QObject {
 private slots:
 	void BasicOperation();
 
-private slots:
-	void t1() { QVERIFY(true); }
-	void t2();
-
 signals:
 	void subscribe1(const qint32 topic);
 	void subscribe2(const qint32 topic);
+
+private:
+	void waitForSignal(int timeout, QSignalSpy& spy, int deltaTime, int signalToCatch);
 };
 
 

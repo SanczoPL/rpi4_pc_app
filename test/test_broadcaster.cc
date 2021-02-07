@@ -1,4 +1,4 @@
-#include "test.h"
+#include "test_broadcaster.h"
 
 constexpr auto PING{ "Ping" };
 constexpr auto MESSAGE_TYPE{ "MessageType" };
@@ -31,9 +31,11 @@ void TestBroadcaster::BasicOperation()
 	IOServer* m_server = new IOServer();
 	QSignalSpy spy0(m_server, SIGNAL(listenForConnection()));
 
+
 	m_server->configure(config3);
-	while (spy0.count() == 0)
-		QTest::qWait(50);
+
+	waitForSignal(1000, spy0, 50, 1);
+
 	QCOMPARE(spy0.count(), 1);
 
 	QThread* m_broadcaster1 = new QThread();
@@ -49,8 +51,8 @@ void TestBroadcaster::BasicOperation()
 	m_broadcaster2->start();
 
 	QSignalSpy spy1(m_server, SIGNAL(connected()));
-	while (spy1.count() == 2)
-		QTest::qWait(50);
+	waitForSignal(1000, spy1, 50, 2);
+
 
 	QSignalSpy spy2(m_server, SIGNAL(subscribeAck()));
 
@@ -60,16 +62,15 @@ void TestBroadcaster::BasicOperation()
 	emit(subscribe2(2));
 
 	Logger->info("Wait for _broadcaster2 to sub:");
-	while (spy2.count() != 2)
-		QTest::qWait(50);
+	waitForSignal(1000, spy2, 50, 2);
+
 	QCOMPARE(spy2.count(), 2);
-	Logger->info("onSendPing");
 
 	_broadcaster1->onSendPing(2);
 
 	QSignalSpy spy3(_broadcaster2, SIGNAL(updatePing(QJsonObject)));
-	while (spy3.count() == 0)
-		QTest::qWait(50);
+	waitForSignal(1000, spy3, 50, 1);
+
 	QCOMPARE(spy3.count(), 1);
 	if (spy3.count() == 1)
 	{
@@ -82,9 +83,18 @@ void TestBroadcaster::BasicOperation()
 	QVERIFY(true);
 }
 
-void TestBroadcaster::t2()
+void TestBroadcaster::waitForSignal(int timeout, QSignalSpy &spy, int deltaTime, int signalToCatch)
 {
-	QVERIFY(true);
+	int time{ 0 };
+	while (spy.count() != signalToCatch)
+	{
+		time += deltaTime;
+		QTest::qWait(deltaTime);
+		if (time >= timeout)
+		{
+			break;
+		}
+	}
 }
 
 QTEST_MAIN(TestBroadcaster)
