@@ -1,6 +1,6 @@
 {
   "General": {
-    "LogLevel": 0,
+    "LogLevel": 2,
     "ThreadsMax": 12,
     "Standalone": false,
     "PopulationSize": 30
@@ -18,6 +18,12 @@
     "Height": 24
   },
   "ImageWidget": {
+    "Width": 32,
+    "Height": 24,
+    "WidthResize": 320,
+    "HeightResize": 240
+  },
+  "ImageProcessingWidget": {
     "Width": 32,
     "Height": 24,
     "WidthResize": 320,
