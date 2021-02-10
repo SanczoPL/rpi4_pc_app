@@ -50,7 +50,7 @@ find_package(Broadcaster REQUIRED)
 file(GLOB_RECURSE SRC_TEST_GLOB QtCommunicator/src/*.cc )
 file(GLOB_RECURSE HEADERS_TEST_GLOB QtCommunicator/include/*.h)
 
-set(SRC_TEST test/test_broadcaster.cc)
+set(SRC_TEST test/test_broadcaster.cc )
 set(HEADERS_TEST test/test_broadcaster.h)
 
 #set(SRC_GTEST gtest/test.cc)
@@ -58,6 +58,7 @@ set(HEADERS_TEST test/test_broadcaster.h)
 
 #set(SRC_MAIN_GTEST gtest/main.cc)
 set(SRC_MAIN src/main.cc)
+set(SRC_MAIN_TEST test/main.cc)
 
 set(SRC src/mainwindow.cc src/server.cc )
 set(HEADERS src/mainwindow.h src/server.h src/structures.h)
@@ -76,7 +77,7 @@ add_executable(${TARGET_NAME}
 
 add_executable(testModules 
 	${SRC} ${HEADERS}
-	#${SRC_TEST} ${HEADERS_TEST}
+	${SRC_TEST} ${HEADERS_TEST}
 	${SRC_GLOB} ${HEADERS_GLOB}
 	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
 )
