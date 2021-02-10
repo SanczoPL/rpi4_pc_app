@@ -7,7 +7,7 @@
 #include "server.h"
 #include "mainwindow.h"
 
-#include "../Broadcaster/include/broadcaster.h"
+#include "broadcaster.h"
 
 #include <QGraphicsItem>
 #include <QJsonObject>

@@ -3,9 +3,9 @@
 
 #include <QTest>
 #include <QSignalSpy>
-#include "../Broadcaster/include/broadcaster.h"
-#include "../QtCommunicator/include/ioserver.h"
-#include "../IncludeSpdlog/include/spdlog.h"
+#include "broadcaster.h"
+#include "ioserver.h"
+#include "spdlog.h"
 
 class TestBroadcaster : public QObject {
 	Q_OBJECT

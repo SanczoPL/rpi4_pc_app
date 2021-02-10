@@ -19,6 +19,6 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
-#include "../ConfigReader/include/configreader.h"
+#include "configreader.h"
 
 #endif // STRUCTURES_PREPROCESSING_MODULES_H

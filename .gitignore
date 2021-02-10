@@ -684,3 +684,9 @@ build/IncludeSpdlog/IncludeSpdlog.vcxproj.user
 build/.vs/rpi-pc-app/v16/ipch/AutoPCH/cdea6acc122a91b6/TEST_BROADCASTER.ipch
 build/testModules.dir/Debug/test_broadcaster.obj
 build/testModules_autogen/include_Debug/7HEK2XT3N7/moc_test_broadcaster.cpp
+build/bin/Debug/concrt140d.dll
+build/bin/Debug/msvcp140_1d.dll
+build/bin/Debug/msvcp140_2d.dll
+build/bin/Debug/msvcp140d.dll
+build/bin/Debug/vccorlib140d.dll
+build/bin/Debug/vcruntime140d.dll

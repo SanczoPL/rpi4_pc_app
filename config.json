@@ -1,6 +1,6 @@
 {
   "General": {
-    "LogLevel": 2,
+    "LogLevel": 0,
     "ThreadsMax": 12,
     "Standalone": false,
     "PopulationSize": 30

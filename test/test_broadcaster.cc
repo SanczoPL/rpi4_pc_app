@@ -11,7 +11,7 @@ void TestBroadcaster::BasicOperation()
 	qRegisterMetaType<QVector<qint32>>("QVector<qint32>");
 	qRegisterMetaType<qint32>("qint32");
 	Logger->set_pattern("[%Y-%m-%d] [%H:%M:%S.%e] [%t] [%^%l%$] %v");
-	Logger->debug("Start main logger with LogLevel:{}", 0);
+	Logger->warn("Start main logger with LogLevel:{}", 0);
 	Logger->set_level(static_cast<spdlog::level::level_enum>(0));
 	QJsonObject config1{
 		{PORT, 12345},
@@ -27,7 +27,8 @@ void TestBroadcaster::BasicOperation()
 	QJsonObject config3{ config1 };
 	config2[ID] = 3;
 
-	IOServer* m_server = new IOServer();
+	IOServer* m_server = new IOServer(config1);
+	Logger->debug("m_server");
 	QSignalSpy spy0(m_server, SIGNAL(listenForConnection()));
 
 	m_server->configure(config3);
