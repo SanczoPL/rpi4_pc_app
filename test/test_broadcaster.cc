@@ -1,6 +1,7 @@
 #include "test_broadcaster.h"
 
 constexpr auto PING{ "Ping" };
+constexpr auto PING_PONG{ "PingPong" };
 constexpr auto MESSAGE_TYPE{ "MessageType" };
 constexpr auto ID{ "Id" };
 constexpr auto IP{ "Ip" };
@@ -25,9 +26,9 @@ void TestBroadcaster::BasicOperation()
 	config2[ID] = 2;
 
 	QJsonObject config3{ config1 };
-	config2[ID] = 3;
+	config3[ID] = 3;
 
-	IOServer* m_server = new IOServer(config1);
+	IOServer* m_server = new IOServer();
 	Logger->debug("m_server");
 	QSignalSpy spy0(m_server, SIGNAL(listenForConnection()));
 
@@ -59,22 +60,22 @@ void TestBroadcaster::BasicOperation()
 	QObject::connect(this, &TestBroadcaster::subscribe2, _broadcaster2, &Broadcaster::onSubscribeSingleTopic);
 	emit(subscribe2(2));
 
-	Logger->info("Wait for _broadcaster2 to sub:");
+	Logger->trace("Wait for _broadcaster2 to sub:");
 	waitForSignal(1000, spy2, 50, 2);
 
 	QCOMPARE(spy2.count(), 2);
 
 	_broadcaster1->onSendPing(2);
 
-	QSignalSpy spy3(_broadcaster2, SIGNAL(updatePing(QJsonObject)));
-	waitForSignal(1000, spy3, 50, 1);
+	QSignalSpy spy3(_broadcaster1, SIGNAL(updatePing(QJsonObject)));
+	waitForSignal(2000, spy3, 50, 1);
 
 	QCOMPARE(spy3.count(), 1);
 	if (spy3.count() == 1)
 	{
 		QList<QVariant> arguments = spy3.takeFirst();
 		qDebug() << "arguments:" << arguments;
-		QVERIFY(arguments.at(0).toJsonObject()[MESSAGE_TYPE].toString() == PING);
+		QVERIFY(arguments.at(0).toJsonObject()[MESSAGE_TYPE].toString() == PING_PONG);
 		QVERIFY(arguments.at(0).toJsonObject()[ID].toInt() == 1);
 	}
 
