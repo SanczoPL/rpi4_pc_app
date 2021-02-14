@@ -19,6 +19,7 @@ configure_file(config.json ${CMAKE_BINARY_DIR}/config.json)
 
 if (WIN32)
 	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\opencvBuild")
+	set(QT5_PATH "E:\\Qt\\5.12.8\\msvc2017_64")
 	list(APPEND CMAKE_PREFIX_PATH "E:\\Qt\\5.12.8\\msvc2017_64")
 	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\spdlog\\build\\install")
 	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\spdlog\\build\\install//lib//cmake//spdlog")
@@ -68,6 +69,7 @@ file(GLOB_RECURSE SRC_WIDGET_GLOB src/widgets/*.cc src/widgets/*.c src/widgets/*
 file(GLOB_RECURSE HEADERS_WIDGET_GLOB src/widgets/*.h src/widgets/*.hpp)
 
 
+
 add_executable(${TARGET_NAME}
 	${SRC_MAIN}
     ${SRC} ${HEADERS}
@@ -76,7 +78,7 @@ add_executable(${TARGET_NAME}
 )
 
 add_executable(testModules 
-	${SRC} ${HEADERS}
+	${SRC} ${HEADERS} ${SRC_MAIN_TEST}
 	${SRC_TEST} ${HEADERS_TEST}
 	${SRC_GLOB} ${HEADERS_GLOB}
 	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
