@@ -5,7 +5,7 @@
 #include <QSignalSpy>
 #include "broadcaster.h"
 #include "ioserver.h"
-#include "spdlog.h"
+#include "includespdlog.h"
 
 class TestBroadcaster : public QObject {
 	Q_OBJECT
