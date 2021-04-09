@@ -14,21 +14,19 @@ set(CMAKE_AUTOMOC ON)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-configure_file(config.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config.json)
-configure_file(config.json ${CMAKE_BINARY_DIR}/config.json)
+macro(copy_json jsonname)
+	configure_file(${jsonname} ${CMAKE_BINARY_DIR}/${jsonname})
+	configure_file(${jsonname} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin/${jsonname})
+	configure_file(${jsonname} ${CMAKE_BINARY_DIR}/bin/${jsonname})
+	configure_file(${jsonname} ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/${jsonname})
+endmacro()
+copy_json("config.json")
 
 if (WIN32)
 	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\opencvBuild")
-	set(QT5_PATH "E:\\Qt\\5.12.8\\msvc2017_64")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\Qt\\5.12.8\\msvc2017_64")
+	list(APPEND CMAKE_PREFIX_PATH "E:\\Qt\\5.15.2\\msvc2019_64")
 	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\spdlog\\build\\install")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\spdlog\\build\\install//lib//cmake//spdlog")
-	include("E:\\repo\\spdlog\\cmake\\utils.cmake")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\IncludeSpdlog\\build\\install")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\ConfigReader\\build\\install")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\QtCommunicator\\build\\install")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\QtCommunicatorPlugin\\build\\install")
-	list(APPEND CMAKE_PREFIX_PATH "E:\\repo\\Broadcaster\\build\\install")
+	set(QT5_PATH  "E:\\Qt\\5.15.2\\msvc2019_64")
 endif (WIN32)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -39,27 +37,41 @@ find_package(Qt5Test REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
-find_package(spdlog REQUIRED)
-find_package(IncludeSpdlog REQUIRED)
-find_package(ConfigReader REQUIRED)
-find_package(QtCommunicator REQUIRED)
-find_package(QtCommunicatorPlugin REQUIRED)
-find_package(Broadcaster REQUIRED)
 
+enable_testing()
 
+macro(clone_build libname)
+	configure_file(clone_build/${libname}.in ${libname}-download/CMakeLists.txt)
+	execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${libname}-download")
+	execute_process(COMMAND "${CMAKE_COMMAND}" --build .
+	WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${libname}-download")
+	add_subdirectory("${CMAKE_BINARY_DIR}/${libname}-src"
+                 "${CMAKE_BINARY_DIR}/${libname}-build")
+endmacro()
+
+clone_build(googletest)
+# Prevent GoogleTest from overriding our compiler/linker options
+# when building with Visual Studio
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+clone_build(spdlog)
+clone_build(IncludeSpdlog)
+clone_build(ConfigReader)
+clone_build(QtCommunicator)
+clone_build(QtCommunicatorPlugin)
+clone_build(Broadcaster)
+
+find_package(spdlog)
+find_package(IncludeSpdlog)
+find_package(ConfigReader)
+find_package(QtCommunicator)
+find_package(QtCommunicatorPlugin)
+find_package(Broadcaster)
 
 file(GLOB_RECURSE SRC_TEST_GLOB QtCommunicator/src/*.cc )
 file(GLOB_RECURSE HEADERS_TEST_GLOB QtCommunicator/include/*.h)
 
-set(SRC_TEST test/test_broadcaster.cc )
-set(HEADERS_TEST test/test_broadcaster.h)
-
-#set(SRC_GTEST gtest/test.cc)
-#set(HEADERS_GTEST gtest/test.h)
-
-#set(SRC_MAIN_GTEST gtest/main.cc)
 set(SRC_MAIN src/main.cc)
-set(SRC_MAIN_TEST test/main.cc)
 
 set(SRC src/mainwindow.cc src/server.cc )
 set(HEADERS src/mainwindow.h src/server.h src/structures.h)
@@ -68,9 +80,12 @@ set(HEADERS src/mainwindow.h src/server.h src/structures.h)
 file(GLOB_RECURSE SRC_WIDGET_GLOB src/widgets/*.cc src/widgets/*.c src/widgets/*.cpp)
 file(GLOB_RECURSE HEADERS_WIDGET_GLOB src/widgets/*.h src/widgets/*.hpp)
 
+add_executable(g_test
+config.json ${SRC} ${HEADERS} ${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB} gtest/gtest.cc)
+add_executable(q_test 
+config.json ${SRC} ${HEADERS} ${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB} qtest/qtest.cc qtest/qtest.h)
 
-
-add_executable(${TARGET_NAME}
+add_executable(${PROJECT_NAME}
 	config.json
 	${SRC_MAIN}
     ${SRC} ${HEADERS}
@@ -78,52 +93,17 @@ add_executable(${TARGET_NAME}
 	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
 )
 
-add_executable(testModules 
-	config.json
-	${SRC} ${HEADERS} 
-	${SRC_TEST} ${HEADERS_TEST}
-	${SRC_GLOB} ${HEADERS_GLOB}
-	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
-)
-	
-#add_executable(gtestModules
-#	${SRC} ${HEADERS}
-#	${SRC_MAIN_GTEST}
-#	#${SRC_GTEST} ${HEADERS_GTEST}
-#	${SRC_GLOB} ${HEADERS_GLOB}
-#	${SRC_WIDGET_GLOB} ${HEADERS_WIDGET_GLOB}
-#)
+target_link_libraries(g_test Broadcaster QtCommunicator gtest gmock)
+target_link_libraries(g_test ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(g_test Qt5::Test Qt5::Network Qt5::Widgets) 
 
+target_link_libraries(q_test Broadcaster QtCommunicator )
+target_link_libraries(q_test ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(q_test Qt5::Test Qt5::Network Qt5::Widgets) 
 
-
-
-target_link_libraries(testModules Broadcaster QtCommunicator )
-target_link_libraries(testModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
-target_link_libraries(testModules Qt5::Test Qt5::Network Qt5::Widgets) 
-add_test(testModules testModules)
-
-#target_link_libraries(gtestModules IncludeSpdlog ConfigReader Broadcaster QtCommunicator QtCommunicatorPlugin)
-#target_link_libraries(gtestModules ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
-#target_link_libraries(gtestModules Qt5::Network Qt5::Widgets)
-#target_link_libraries(gtestModules gtest gtest_main)
-#add_test( gtestModules gtestModules )
-
-qt5_use_modules(${PROJECT_NAME} Network Widgets Test)
-
-
-if (UNIX)
-	target_link_libraries(${PROJECT_NAME} Broadcaster)
-	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
-	target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Widgets)
-endif (UNIX)
-
-if (WIN32)
-	target_link_libraries(${PROJECT_NAME} Broadcaster)
-	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
-	target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Widgets)
-endif (WIN32)
-
-
+target_link_libraries(${PROJECT_NAME} Broadcaster)
+target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Widgets)
 
 message("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE} ")
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND WIN32)
@@ -139,8 +119,6 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 endif()
 
-
-
 if (WIN32)
     get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
     get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
@@ -148,10 +126,7 @@ if (WIN32)
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-	add_custom_command(TARGET testModules POST_BUILD
-       COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:testModules>)
 endif(WIN32)
-
 
 if (WIN32)
 	macro(qt5_copy_dll APP DLL)
@@ -170,7 +145,6 @@ if (WIN32)
 			)
 	endmacro()
 	qt5_copy_dll( ${PROJECT_NAME} Core)
-	qt5_copy_dll( testModules Core)
 
 	message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}/Release ")
 
@@ -190,7 +164,6 @@ if (WIN32)
 	message("qt:" ${QT5_PATH}/bin/Qt5Test${OPENCV_PREFIX_BUILD_TYPE}.dll )
 		message("to:" ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-		
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${QT5_PATH}/bin/Qt5Test${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${QT5_PATH}/bin/Qt5Gui${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${QT5_PATH}/bin/Qt5Widgets${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
@@ -211,6 +184,4 @@ if (WIN32)
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_videoio_ffmpeg450_64.dll   ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
 
 		)
-
-
 endif(WIN32)
