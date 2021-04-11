@@ -1781,3 +1781,4 @@ build/spdlog-download/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.command.1
 build/spdlog-download/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.read.1.tlog
 build/spdlog-download/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.write.1.tlog
 build/spdlog-download/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/ZERO_CHECK.lastbuildstate
+build/.vs/rpi-pc-app/v16/ipch/AutoPCH/b031b867ef14ea23/SERVER.ipch
